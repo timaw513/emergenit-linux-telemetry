@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+# telem — EmergenIT Linux Telemetry stack manager
+# https://github.com/timaw513/emergenit-linux-telemetry
+#
+# Works with or without Claude Desktop.
+# Run 'telem init' on a new machine to get started.
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+COMPOSE_DIR="$SCRIPT_DIR"
+COMPOSE="docker compose -f $COMPOSE_DIR/docker-compose.yml"
+ENV_FILE="$COMPOSE_DIR/.env"
+
+# Load .env if present (for HOST_HOSTNAME etc.)
+[[ -f "$ENV_FILE" ]] && export $(grep -v '^#' "$ENV_FILE" | xargs)
+
+_run() { sg docker "$COMPOSE $*" 2>&1; }
+
+_require_env() {
+    if [[ ! -f "$ENV_FILE" ]]; then
+        echo "ERROR: .env not found. Run 'telem init' first."
+        exit 1
+    fi
+}
+
+case "${1:-help}" in
+
+  init)
+    bash "$SCRIPT_DIR/scripts/telem-init.sh"
+    ;;
+
+  start)
+    _require_env
+    echo "Starting Linux Telemetry stack..."
+    _run "up -d"
+    ;;
+
+  stop)
+    echo "Stopping Linux Telemetry stack..."
+    _run "down"
+    ;;
+
+  restart)
+    echo "Restarting Linux Telemetry stack..."
+    _run "restart"
+    ;;
+
+  status)
+    _run "ps"
+    ;;
+
+  logs)
+    SERVICE="${2:-}"
+    _run "logs --tail=50 -f $SERVICE"
+    ;;
+
+  scan)
+    _require_env
+    HOST="${HOST_HOSTNAME:-$(hostname -s)}"
+    echo "Running Lynis audit on $HOST (2-3 minutes)..."
+    sg docker "docker exec lt-lynis /venv/bin/python3 /app/mcp_server.py --run-once"
+    echo "Ingesting report..."
+    sg docker "docker exec lt-audit-writer python writer.py --once"
+    echo "Done. Open Grafana to see results: http://localhost:3000"
+    ;;
+
+  scan-host)
+    # Scan a remote host via SSH
+    # Usage: telem scan-host <name> <user@host>
+    _require_env
+    HNAME="${2:-}"
+    HADDR="${3:-}"
+    if [[ -z "$HNAME" || -z "$HADDR" ]]; then
+        echo "Usage: telem scan-host <name> <user@host>"
+        echo "Example: telem scan-host web-server user@192.168.1.100"
+        exit 1
+    fi
+    echo "Running remote Lynis audit on $HNAME ($HADDR)..."
+    sg docker "docker exec lt-lynis /venv/bin/python3 /app/mcp_server.py --run-remote $HNAME $HADDR"
+    echo "Ingesting report..."
+    sg docker "docker exec lt-audit-writer python writer.py --once"
+    echo "Done."
+    ;;
+
+  ingest)
+    echo "Forcing report ingestion..."
+    sg docker "docker exec lt-audit-writer python writer.py --once"
+    ;;
+
+  update)
+    echo "Pulling latest images and rebuilding..."
+    _run "pull"
+    _run "build"
+    _run "up -d"
+    ;;
+
+  install-mcp)
+    bash "$SCRIPT_DIR/scripts/install-claude-mcp.sh"
+    ;;
+
+  open)
+    xdg-open http://localhost:3000 2>/dev/null || open http://localhost:3000 2>/dev/null || \
+        echo "Open http://localhost:3000 in your browser."
+    ;;
+
+  help|*)
+    cat << EOF
+
+  telem — EmergenIT Linux Telemetry
+  https://github.com/timaw513/emergenit-linux-telemetry
+
+  SETUP
+    telem init              First-run setup (credentials, hosts, Claude Desktop)
+    telem install-mcp       Wire lynis-mcp into Claude Desktop only
+
+  STACK
+    telem start             Start all containers
+    telem stop              Stop all containers
+    telem restart           Restart all containers
+    telem status            Show container health
+    telem update            Pull latest images and restart
+    telem open              Open Grafana in browser
+
+  AUDIT
+    telem scan              Run Lynis audit on this machine
+    telem scan-host <n> <user@host>  Audit a remote host via SSH
+    telem ingest            Force ingestion of any pending reports
+    telem logs [service]    Tail logs (telegraf|influxdb|audit-writer|lynis-mcp|grafana)
+
+  Grafana:  http://localhost:3000
+  InfluxDB: http://localhost:8086
+
+EOF
+    ;;
+esac

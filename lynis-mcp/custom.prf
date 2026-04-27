@@ -1,0 +1,6 @@
+# EmergenIT custom Lynis profile — ThinkCentre M720s workstation
+# Placed at /etc/lynis/custom.prf — auto-merged with default.prf
+
+# Skip TIME-3185 — timesyncd sync check fails inside container
+# Host sync confirmed: System clock synchronized: yes (timedatectl)
+skip-test=TIME-3185

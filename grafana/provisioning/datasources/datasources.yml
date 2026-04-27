@@ -1,0 +1,24 @@
+apiVersion: 1
+# NOTE: Token substitution via env vars is NOT supported in secureJsonData.
+# Run 'telem init' or 'scripts/install-claude-mcp.sh' to inject credentials
+# via the Grafana API after first boot instead.
+# This file provisions the datasource names/types only.
+
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    jsonData:
+      version: Flux
+      organization: emergenit
+      defaultBucket: linux-metrics
+    isDefault: true
+    editable: true
+
+  - name: AuditDB
+    type: frser-sqlite-datasource
+    access: proxy
+    jsonData:
+      path: /data/audit.db
+    editable: true

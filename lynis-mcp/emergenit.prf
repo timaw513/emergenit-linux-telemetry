@@ -1,0 +1,5 @@
+# EmergenIT custom Lynis profile — ThinkCentre M720s workstation
+# Skip TIME-3185 only — timesyncd check fails inside container
+# Host sync confirmed via: timedatectl status (System clock synchronized: yes)
+
+skip-test=TIME-3185

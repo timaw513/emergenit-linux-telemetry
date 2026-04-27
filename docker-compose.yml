@@ -1,0 +1,115 @@
+# EmergenIT Linux Telemetry Stack
+# Target: ThinkCentre M720s · 192.168.1.164 · Ubuntu 24.04
+# Reports source: /home/user/lynis-reports/ (Lynis MCP on host OS)
+
+services:
+
+  # ── Telegraf ─────────────────────────────────────────────────────────────
+  telegraf:
+    image: telegraf:1.30
+    container_name: lt-telegraf
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+      - /proc:/rootfs/proc:ro
+      - /sys:/rootfs/sys:ro
+      - /etc:/rootfs/etc:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      HOST_PROC: /rootfs/proc
+      HOST_SYS: /rootfs/sys
+      HOST_ETC: /rootfs/etc
+      INFLUX_TOKEN: ${INFLUX_TOKEN}
+    depends_on:
+      influxdb:
+        condition: service_healthy
+
+  # ── InfluxDB ──────────────────────────────────────────────────────────────
+  influxdb:
+    image: influxdb:2.7
+    container_name: lt-influxdb
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+    environment:
+      DOCKER_INFLUXDB_INIT_MODE: setup
+      DOCKER_INFLUXDB_INIT_USERNAME: ${INFLUX_USER:-admin}
+      DOCKER_INFLUXDB_INIT_PASSWORD: ${INFLUX_PASSWORD}
+      DOCKER_INFLUXDB_INIT_ORG: emergenit
+      DOCKER_INFLUXDB_INIT_BUCKET: linux-metrics
+      DOCKER_INFLUXDB_INIT_RETENTION: 30d
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: ${INFLUX_TOKEN}
+    healthcheck:
+      test: ["CMD", "influx", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Lynis MCP ─────────────────────────────────────────────────────────────
+  # Runs Lynis against the host OS on schedule + on-demand via MCP tool
+  lynis-mcp:
+    build: ./lynis-mcp
+    container_name: lt-lynis
+    restart: unless-stopped
+    pid: host
+    network_mode: host
+    privileged: true
+    volumes:
+      - lynis-reports:/lynis-reports
+      - /proc:/proc:ro
+      - /sys:/sys:ro
+      - /etc:/etc:ro
+      - /usr:/usr:ro
+      - /var/lib/dpkg:/var/lib/dpkg:ro
+      - /run/systemd:/run/systemd:ro
+      - /var/lib/systemd:/var/lib/systemd:ro
+      - /bin:/bin:ro
+      - /sbin:/sbin:ro
+      - /lib:/lib:ro
+    environment:
+      REPORTS_DIR: /lynis-reports
+      HOST_HOSTNAME: thinkcentre-m720s
+      CRON_SCHEDULE: "0 2 * * *"
+      MCP_MODE: "0"
+
+  # ── Audit Writer ──────────────────────────────────────────────────────────
+  audit-writer:
+    build: ./audit-writer
+    container_name: lt-audit-writer
+    restart: unless-stopped
+    volumes:
+      - lynis-reports:/lynis-reports:ro
+      - audit-db:/data
+    environment:
+      REPORTS_DIR: /lynis-reports
+      DB_PATH: /data/audit.db
+      POLL_INTERVAL: 300
+
+  # ── Grafana ───────────────────────────────────────────────────────────────
+  grafana:
+    image: grafana/grafana:11.0.0
+    container_name: lt-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - audit-db:/data:ro
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_INSTALL_PLUGINS: frser-sqlite-datasource
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+    depends_on:
+      - influxdb
+
+volumes:
+  influxdb-data:
+  grafana-data:
+  audit-db:
+  lynis-reports:

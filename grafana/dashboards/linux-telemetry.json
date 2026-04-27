@@ -1,0 +1,1535 @@
+{
+  "title": "EmergenIT Linux Telemetry",
+  "uid": "emergenit-linux-telemetry",
+  "timezone": "browser",
+  "refresh": "5m",
+  "schemaVersion": 38,
+  "tags": [
+    "emergenit",
+    "linux",
+    "audit"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "CPU Usage %",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-10m) |> filter(fn:(r)=>r._measurement==\"cpu\" and r._field==\"usage_active\" and r.cpu==\"cpu-total\") |> last()"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "gridPos": {
+        "x": 4,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "Memory Used %",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-10m) |> filter(fn:(r)=>r._measurement==\"mem\" and r._field==\"used_percent\") |> last()"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "gridPos": {
+        "x": 8,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "Disk Used % (/)",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-10m) |> filter(fn:(r)=>r._measurement==\"disk\" and r._field==\"used_percent\" and r.path==\"/\") |> last()"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "System Load (1m)",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 4
+              },
+              {
+                "color": "red",
+                "value": 8
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-10m) |> filter(fn:(r)=>r._measurement==\"system\" and r._field==\"load1\") |> last()"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "gridPos": {
+        "x": 16,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "Last Hardening Score",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT hardening_index FROM audit_runs ORDER BY run_at DESC LIMIT 1",
+          "queryType": "table",
+          "timeColumns": [
+            "run_at"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "gridPos": {
+        "x": 20,
+        "y": 0,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "Last Score Delta",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT index_delta FROM audit_runs WHERE index_delta IS NOT NULL ORDER BY run_at DESC LIMIT 1",
+          "queryType": "table",
+          "timeColumns": [
+            "run_at"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 4,
+        "h": 4
+      },
+      "type": "stat",
+      "title": "NTP Synchronized",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "1 1": {
+                  "text": "YES",
+                  "color": "green",
+                  "index": 0
+                }
+              }
+            },
+            {
+              "type": "value",
+              "options": {
+                "0 1": {
+                  "text": "NO",
+                  "color": "red",
+                  "index": 1
+                }
+              }
+            },
+            {
+              "type": "special",
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "UNKNOWN",
+                  "color": "orange",
+                  "index": 2
+                }
+              }
+            }
+          ],
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-10m) |> filter(fn:(r)=>r._measurement==\"ntp_status\" and r._field==\"value\") |> last()"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "gridPos": {
+        "x": 0,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "CPU Usage Over Time",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"cpu\" and r._field==\"usage_active\" and r.cpu==\"cpu-total\") |> aggregateWindow(every:5m, fn:mean)"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "gridPos": {
+        "x": 12,
+        "y": 8,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "Memory & Swap Usage",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"mem\" and r._field==\"used_percent\") |> aggregateWindow(every:5m, fn:mean)"
+        },
+        {
+          "refId": "B",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"swap\" and r._field==\"used_percent\") |> aggregateWindow(every:5m, fn:mean)"
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "gridPos": {
+        "x": 0,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "Disk I/O (reads / writes)",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"diskio\" and r._field==\"read_bytes\") |> derivative(unit:1s, nonNegative:true) |> aggregateWindow(every:5m, fn:mean)"
+        },
+        {
+          "refId": "B",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"diskio\" and r._field==\"write_bytes\") |> derivative(unit:1s, nonNegative:true) |> aggregateWindow(every:5m, fn:mean)"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "gridPos": {
+        "x": 12,
+        "y": 16,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "Network Throughput",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "Bps",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 5
+          }
+        }
+      },
+      "options": {
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"net\" and r._field==\"bytes_recv\") |> derivative(unit:1s, nonNegative:true) |> aggregateWindow(every:5m, fn:mean)"
+        },
+        {
+          "refId": "B",
+          "query": "from(bucket:\"linux-metrics\") |> range(start:-6h) |> filter(fn:(r)=>r._measurement==\"net\" and r._field==\"bytes_sent\") |> derivative(unit:1s, nonNegative:true) |> aggregateWindow(every:5m, fn:mean)"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "gridPos": {
+        "x": 0,
+        "y": 24,
+        "w": 24,
+        "h": 2
+      },
+      "type": "text",
+      "title": "",
+      "options": {
+        "content": "## Lynis Audit History",
+        "mode": "markdown"
+      }
+    },
+    {
+      "id": 21,
+      "gridPos": {
+        "x": 0,
+        "y": 26,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "Hardening Score Over Time",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 15
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT run_at as time, hardening_index as \"Hardening Index\" FROM audit_runs WHERE hardening_index IS NOT NULL ORDER BY run_at ASC",
+          "queryType": "table",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "gridPos": {
+        "x": 12,
+        "y": 26,
+        "w": 12,
+        "h": 8
+      },
+      "type": "timeseries",
+      "title": "Warnings & Suggestions Per Run",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 10
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT run_at as time, warnings_count as \"Warnings\", suggestions_count as \"Suggestions\" FROM audit_runs ORDER BY run_at ASC",
+          "queryType": "table",
+          "timeColumns": [
+            "time"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 23,
+      "gridPos": {
+        "x": 0,
+        "y": 34,
+        "w": 24,
+        "h": 10
+      },
+      "type": "table",
+      "title": "Recent Audit Runs",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "hardening_index"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "red",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 60
+                    },
+                    {
+                      "color": "green",
+                      "value": 80
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-background"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "index_delta"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "run_at",
+            "desc": true
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT run_at, host, hardening_index, index_delta, warnings_count, suggestions_count, lynis_version FROM audit_runs ORDER BY run_at DESC LIMIT 20",
+          "queryType": "table",
+          "timeColumns": [
+            "run_at"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "gridPos": {
+        "x": 0,
+        "y": 44,
+        "w": 24,
+        "h": 10
+      },
+      "type": "table",
+      "title": "Critical & High Findings (Latest Run)",
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "CRITICAL": {
+                        "color": "red",
+                        "index": 0
+                      },
+                      "HIGH": {
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "rawQueryText": "SELECT f.test_id, f.severity, f.finding_type, f.category, f.description, f.solution FROM findings f JOIN audit_runs r ON f.run_id = r.id WHERE r.id = (SELECT id FROM audit_runs ORDER BY run_at DESC LIMIT 1) AND f.severity IN ('CRITICAL','HIGH') ORDER BY f.severity, f.test_id",
+          "queryType": "table",
+          "timeColumns": []
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "type": "row",
+      "title": "Hardening Report \u2014 Latest Run",
+      "gridPos": {
+        "x": 0,
+        "y": 56,
+        "w": 24,
+        "h": 1
+      },
+      "collapsed": false
+    },
+    {
+      "id": 101,
+      "type": "stat",
+      "title": "Hardening Score",
+      "gridPos": {
+        "x": 0,
+        "y": 57,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 60
+              },
+              {
+                "color": "green",
+                "value": 80
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT hardening_index FROM audit_runs ORDER BY run_at DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "type": "stat",
+      "title": "Warnings",
+      "gridPos": {
+        "x": 4,
+        "y": 57,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT warnings_count FROM audit_runs ORDER BY run_at DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "type": "stat",
+      "title": "Suggestions",
+      "gridPos": {
+        "x": 8,
+        "y": 57,
+        "w": 4,
+        "h": 4
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 35
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT suggestions_count FROM audit_runs ORDER BY run_at DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 104,
+      "type": "stat",
+      "title": "Last Run",
+      "gridPos": {
+        "x": 12,
+        "y": 57,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "string",
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "blue"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background",
+        "textMode": "value"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT run_at FROM audit_runs ORDER BY run_at DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "type": "stat",
+      "title": "Score Change",
+      "gridPos": {
+        "x": 18,
+        "y": 57,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 0
+              },
+              {
+                "color": "green",
+                "value": 1
+              }
+            ]
+          },
+          "color": {
+            "mode": "thresholds"
+          }
+        }
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT COALESCE(index_delta, 0) FROM audit_runs ORDER BY run_at DESC LIMIT 1"
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "type": "table",
+      "title": "\u26a0\ufe0f Warnings \u2014 Immediate Action Required",
+      "gridPos": {
+        "x": 0,
+        "y": 61,
+        "w": 24,
+        "h": 6
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "severity",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "show": false
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "width": 0
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "CRITICAL": {
+                        "color": "dark-red",
+                        "index": 0
+                      },
+                      "HIGH": {
+                        "color": "orange",
+                        "index": 1
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "test_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "description"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 420
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "solution"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 300
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT f.test_id, f.severity, f.category, f.description,\n  CASE\n    WHEN f.test_id='PKGS-7392' THEN 'Run: sudo apt update && sudo apt upgrade -y'\n    WHEN f.test_id='TIME-3185' THEN 'Run: sudo systemctl restart systemd-timesyncd && timedatectl status'\n    ELSE COALESCE(NULLIF(f.solution,''), NULLIF(f.solution,'-'), 'See lynis documentation for ' || f.test_id)\n  END as solution\nFROM findings f\nJOIN audit_runs r ON f.run_id = r.id\nWHERE r.id = (SELECT id FROM audit_runs ORDER BY run_at DESC LIMIT 1)\n  AND f.finding_type = 'warning'\nORDER BY f.severity, f.test_id"
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "type": "barchart",
+      "title": "Findings by Category (Latest Run)",
+      "gridPos": {
+        "x": 0,
+        "y": 67,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "options": {
+        "orientation": "horizontal",
+        "xTickLabelRotation": 0,
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        }
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "fillOpacity": 80
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT category,\n  SUM(CASE WHEN severity='HIGH' OR severity='CRITICAL' THEN 1 ELSE 0 END) as High,\n  SUM(CASE WHEN severity='MEDIUM' THEN 1 ELSE 0 END) as Medium,\n  SUM(CASE WHEN severity='LOW' THEN 1 ELSE 0 END) as Low\nFROM findings f\nJOIN audit_runs r ON f.run_id = r.id\nWHERE r.id = (SELECT id FROM audit_runs ORDER BY run_at DESC LIMIT 1)\nGROUP BY category ORDER BY High DESC, Medium DESC"
+        }
+      ]
+    },
+    {
+      "id": 116,
+      "type": "table",
+      "title": "\ud83d\udccb Path to 80 \u2014 Workstation-Safe Fixes",
+      "gridPos": {
+        "x": 12,
+        "y": 67,
+        "w": 12,
+        "h": 8
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "priority",
+            "desc": false
+          }
+        ]
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "test_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 100
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "fix"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 320
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT f.test_id,\n  CASE f.test_id\n    WHEN 'AUTH-9262' THEN 1\n    WHEN 'KRNL-6000' THEN 2\n    WHEN 'KRNL-5820' THEN 3\n    WHEN 'ACCT-9630' THEN 4\n    WHEN 'ACCT-9626' THEN 5\n    WHEN 'PKGS-7420' THEN 6\n    ELSE 9\n  END as priority,\n  f.description,\n  CASE f.test_id\n    WHEN 'AUTH-9262' THEN 'sudo apt install libpam-pwquality'\n    WHEN 'KRNL-6000' THEN 'Add sysctl hardening to /etc/sysctl.d/99-hardening.conf'\n    WHEN 'KRNL-5820' THEN 'echo \"* hard core 0\" >> /etc/security/limits.conf'\n    WHEN 'ACCT-9630' THEN 'Add rules to /etc/audit/rules.d/hardening.rules + augenrules --load'\n    WHEN 'ACCT-9626' THEN 'sudo apt install sysstat && systemctl enable --now sysstat'\n    WHEN 'PKGS-7420' THEN 'sudo dpkg-reconfigure unattended-upgrades'\n    ELSE 'See lynis documentation'\n  END as fix\nFROM findings f\nJOIN audit_runs r ON f.run_id = r.id\nWHERE r.id = (SELECT id FROM audit_runs ORDER BY run_at DESC LIMIT 1)\n  AND f.test_id IN ('AUTH-9262','KRNL-6000','KRNL-5820','ACCT-9630','ACCT-9626','PKGS-7420')\nORDER BY priority"
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "type": "table",
+      "title": "\ud83d\udcdd All Suggestions \u2014 Latest Run",
+      "gridPos": {
+        "x": 0,
+        "y": 75,
+        "w": 24,
+        "h": 14
+      },
+      "datasource": {
+        "type": "frser-sqlite-datasource",
+        "uid": "PC59924CDF74A3ECD"
+      },
+      "options": {
+        "sortBy": [
+          {
+            "displayName": "severity",
+            "desc": false
+          }
+        ],
+        "footer": {
+          "countRows": true,
+          "show": true,
+          "reducer": [
+            "count"
+          ],
+          "fields": ""
+        }
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "HIGH": {
+                        "color": "orange",
+                        "index": 0
+                      },
+                      "MEDIUM": {
+                        "color": "yellow",
+                        "index": 1
+                      },
+                      "LOW": {
+                        "color": "green",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "test_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 110
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "category"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "description"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 400
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "workstation_safe"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              },
+              {
+                "id": "custom.displayMode",
+                "value": "color-text"
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "type": "value",
+                    "options": {
+                      "Yes": {
+                        "color": "green",
+                        "index": 0
+                      },
+                      "Skip": {
+                        "color": "orange",
+                        "index": 1
+                      },
+                      "Review": {
+                        "color": "yellow",
+                        "index": 2
+                      }
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "table",
+          "timeColumns": [],
+          "rawQueryText": "SELECT f.test_id, f.severity, f.category, f.description,\n  CASE f.test_id\n    WHEN 'FILE-6310' THEN 'Skip'\n    WHEN 'USB-1000'  THEN 'Skip'\n    WHEN 'STRG-1846' THEN 'Skip'\n    WHEN 'BANN-7126' THEN 'Skip'\n    WHEN 'BANN-7130' THEN 'Skip'\n    WHEN 'HRDN-7222' THEN 'Skip'\n    WHEN 'FINT-4350' THEN 'Skip'\n    WHEN 'AUTH-9282' THEN 'Skip'\n    WHEN 'ACCT-9622' THEN 'Skip'\n    WHEN 'LOGG-2154' THEN 'Review'\n    WHEN 'TOOL-5002' THEN 'Review'\n    ELSE 'Yes'\n  END as workstation_safe\nFROM findings f\nJOIN audit_runs r ON f.run_id = r.id\nWHERE r.id = (SELECT id FROM audit_runs ORDER BY run_at DESC LIMIT 1)\n  AND f.finding_type = 'suggestion'\nORDER BY\n  CASE f.severity WHEN 'HIGH' THEN 1 WHEN 'MEDIUM' THEN 2 ELSE 3 END,\n  f.category, f.test_id"
+        }
+      ]
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "DS_INFLUXDB",
+        "type": "datasource",
+        "query": "influxdb",
+        "current": {
+          "text": "InfluxDB",
+          "value": "InfluxDB"
+        },
+        "hide": 2
+      },
+      {
+        "name": "DS_AUDITDB",
+        "type": "datasource",
+        "query": "frser-sqlite-datasource",
+        "current": {
+          "text": "AuditDB",
+          "value": "AuditDB"
+        },
+        "hide": 2
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  }
+}

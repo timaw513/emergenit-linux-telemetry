@@ -1,0 +1,26 @@
+# EmergenIT Linux Telemetry — .gitignore
+
+# Credentials — never commit
+.env
+
+# SSH keys
+*.pem
+*.key
+id_rsa*
+id_ed25519*
+
+# Lynis reports (large, machine-specific)
+lynis-reports/
+
+# Grafana runtime
+grafana/data/
+
+# Docker volumes (managed by Docker)
+volumes/
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+*.swp

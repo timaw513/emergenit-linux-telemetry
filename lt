@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+# lt — EmergenIT Linux Telemetry stack manager
+# Usage: lt [start|stop|restart|status|logs|ingest|update|help]
+
+COMPOSE_DIR="/home/user/linux-telemetry"
+COMPOSE="docker compose -f $COMPOSE_DIR/docker-compose.yml"
+
+_run() { sg docker "$COMPOSE $*"; }
+
+case "${1:-help}" in
+
+  start)
+    echo "Starting Linux Telemetry stack..."
+    _run "up -d"
+    ;;
+
+  stop)
+    echo "Stopping Linux Telemetry stack..."
+    _run "down"
+    ;;
+
+  restart)
+    echo "Restarting Linux Telemetry stack..."
+    _run "restart"
+    ;;
+
+  status)
+    _run "ps"
+    ;;
+
+  logs)
+    # lt logs            → all containers
+    # lt logs telegraf   → specific container
+    SERVICE="${2:-}"
+    _run "logs --tail=40 -f $SERVICE"
+    ;;
+
+  ingest)
+    echo "Triggering on-demand Lynis report ingestion..."
+    sg docker "docker exec lt-audit-writer python writer.py --once"
+    ;;
+
+  update)
+    echo "Pulling latest images and rebuilding..."
+    _run "pull"
+    _run "build"
+    _run "up -d"
+    ;;
+
+  help|*)
+    cat <<EOF
+lt — EmergenIT Linux Telemetry manager
+
+  lt start          Start all containers
+  lt stop           Stop all containers
+  lt restart        Restart all containers
+  lt status         Show container health
+  lt logs           Tail logs (all containers)
+  lt logs <name>    Tail logs for one container (telegraf|influxdb|audit-writer|grafana)
+  lt ingest         Force Lynis report ingestion now
+  lt update         Pull latest images and restart
+
+Grafana:  http://localhost:3000
+InfluxDB: http://localhost:8086
+EOF
+    ;;
+esac
