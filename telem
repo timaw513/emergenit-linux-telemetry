@@ -11,6 +11,7 @@ COMPOSE="docker compose -f $COMPOSE_DIR/docker-compose.yml"
 ENV_FILE="$COMPOSE_DIR/.env"
 
 # Load .env if present (for HOST_HOSTNAME etc.)
+# shellcheck disable=SC2046
 [[ -f "$ENV_FILE" ]] && export $(grep -v '^#' "$ENV_FILE" | xargs)
 
 _run() { sg docker "$COMPOSE $*" 2>&1; }
