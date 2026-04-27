@@ -129,15 +129,16 @@ Claude will call the tools, read the findings, and give you a prioritized remedi
 Two dashboard sections:
 
 **System Telemetry** — live metrics from Telegraf
-- CPU, memory, disk, network stat cards
-- Time-series graphs for all metrics
-- NTP sync status
+
+![System Telemetry Dashboard](docs/dashboard-system-telemetry.png)
+
+Real-time stat cards for CPU, memory, disk, network, system load, and NTP sync status — with time-series graphs for trend analysis.
 
 **Hardening Report** — from Lynis audit history
-- Hardening score over time
-- Warnings table with inline fix commands
-- All suggestions with workstation-safe classification
-- Path to 80 — prioritized fix list
+
+![Hardening Report Dashboard](docs/dashboard-hardening-report.png)
+
+Hardening score, warnings table with inline fix commands, findings breakdown by category, workstation-safe path-to-80 fix list, and full suggestions table with Yes/Skip/Review classification.
 
 ---
 

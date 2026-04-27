@@ -1,0 +1,3 @@
+Dashboard screenshots go here:
+- dashboard-system-telemetry.png
+- dashboard-hardening-report.png
