@@ -39,6 +39,7 @@ section "Credentials"
 if [[ -f "$ENV_FILE" ]]; then
     warn ".env already exists. Keeping existing credentials."
     warn "Delete $ENV_FILE and re-run to regenerate."
+    # shellcheck source=/dev/null
     source "$ENV_FILE"
 else
     info "Generating secure credentials..."
